@@ -57,6 +57,59 @@ app.get("/writers", async (req, res) => {
     }
 });
 
+import { ObjectId } from "mongodb";
+
+app.get("/writers/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const db = await connectDB();
+
+        // Get all ebooks by this writer
+        const ebooks = await db
+            .collection("ebooks")
+            .find({ "writer.id": id })
+            .toArray();
+
+        if (ebooks.length === 0) {
+            return res.status(404).json({
+                message: "Writer not found",
+            });
+        }
+
+        const writer = ebooks[0].writer;
+
+        const totalBooks = ebooks.length;
+
+        const totalSales = ebooks.reduce(
+            (sum, ebook) => sum + (ebook.totalSales || 0),
+            0
+        );
+
+        const averageRating =
+            ebooks.reduce((sum, ebook) => sum + (ebook.rating || 0), 0) /
+            totalBooks;
+
+        res.json({
+            writer: {
+                id: writer.id,
+                name: writer.name,
+                email: writer.email,
+                photo: writer.photo,
+                totalBooks,
+                totalSales,
+                averageRating: Number(averageRating.toFixed(1)),
+            },
+            ebooks,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Failed to load writer details",
+        });
+    }
+});
+
 
 
 
