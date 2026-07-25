@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
+import ebookRoutes from "./routes/ebooks.js";
+
 
 const app = express();
 
@@ -15,6 +17,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 await connectDB();
+
+app.use("/ebooks", ebookRoutes);
+
+
 
 
 app.get("/", (req, res) => {
