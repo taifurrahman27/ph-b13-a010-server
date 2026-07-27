@@ -111,6 +111,40 @@ app.get("/writers/:id", async (req, res) => {
 });
 
 
+app.get("/writers/:id/ebooks", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const db = await connectDB();
+
+        const ebooks = await db
+            .collection("ebooks")
+            .find({
+                "writer.id": id,
+            })
+            .sort({
+                createdAt: -1,
+            })
+            .toArray();
+
+        res.status(200).json({
+            success: true,
+            count: ebooks.length,
+            ebooks,
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to load writer ebooks.",
+        });
+    }
+});
+
+
+
+
 
 
 app.get("/", (req, res) => {
