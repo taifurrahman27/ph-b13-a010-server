@@ -248,6 +248,59 @@ router.patch("/:id/status", async (req, res) => {
 });
 
 
+router.patch("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid ebook ID.",
+            });
+        }
+
+        const db = await connectDB();
+
+        const updatedData = {
+            ...req.body,
+            price: Number(req.body.price),
+            pages: Number(req.body.pages),
+            updatedAt: new Date(),
+        };
+
+        delete updatedData._id;
+
+        const result = await db.collection("ebooks").updateOne(
+            {
+                _id: new ObjectId(id),
+            },
+            {
+                $set: updatedData,
+            }
+        );
+
+        if (!result.matchedCount) {
+            return res.status(404).json({
+                success: false,
+                message: "Ebook not found.",
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "Ebook updated successfully.",
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to update ebook.",
+        });
+    }
+});
+
+
 
 
 
