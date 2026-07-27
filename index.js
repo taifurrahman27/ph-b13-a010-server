@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
+import { ObjectId } from "mongodb";
 import ebookRoutes from "./routes/ebooks.js";
 
 
@@ -57,7 +58,6 @@ app.get("/writers", async (req, res) => {
     }
 });
 
-import { ObjectId } from "mongodb";
 
 app.get("/writers/:id", async (req, res) => {
     try {
@@ -109,7 +109,6 @@ app.get("/writers/:id", async (req, res) => {
         });
     }
 });
-
 
 
 
