@@ -148,4 +148,108 @@ router.post("/", async (req, res) => {
     }
 });
 
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid ebook ID.",
+            });
+        }
+
+        const db = await connectDB();
+
+        const result = await db.collection("ebooks").deleteOne({
+            _id: new ObjectId(id),
+        });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Ebook not found.",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Ebook deleted successfully.",
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete ebook.",
+        });
+    }
+});
+
+
+router.patch("/:id/status", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid ebook ID.",
+            });
+        }
+
+        if (
+            status !== "Published" &&
+            status !== "Unpublished"
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid status.",
+            });
+        }
+
+        const db = await connectDB();
+
+        const result = await db.collection("ebooks").updateOne(
+            {
+                _id: new ObjectId(id),
+            },
+            {
+                $set: {
+                    status,
+                    updatedAt: new Date(),
+                },
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Ebook not found.",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Ebook ${status.toLowerCase()} successfully.`,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to update ebook status.",
+        });
+    }
+});
+
+
+
+
+
+
 export default router;
