@@ -151,6 +151,52 @@ router.delete("/", async (req, res) => {
 });
 
 
+router.get("/check", async (req, res) => {
+
+    try {
+
+        const { userId, ebookId } = req.query;
+
+
+        if (!userId || !ebookId) {
+            return res.status(400).json({
+                success: false,
+                message: "userId and ebookId required",
+            });
+        }
+
+
+        const db = await connectDB();
+
+
+        const bookmark = await db
+            .collection("bookmarks")
+            .findOne({
+                userId,
+                ebookId,
+            });
+
+
+        res.status(200).json({
+            success: true,
+            bookmarked: Boolean(bookmark),
+        });
+
+
+    } catch (error) {
+
+        console.error("Check bookmark error:", error);
+
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to check bookmark",
+        });
+
+    }
+
+});
+
 
 
 

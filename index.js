@@ -7,8 +7,6 @@ import ebookRoutes from "./routes/ebooks.js";
 import bookmarkRoutes from "./routes/bookmarks.js";
 
 
-
-
 const app = express();
 
 app.use(cors({
