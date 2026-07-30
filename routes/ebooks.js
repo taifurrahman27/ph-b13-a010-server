@@ -28,6 +28,28 @@ router.get("/", async (req, res) => {
 });
 
 
+router.get("/admin", async (req, res) => {
+    try {
+        const db = await connectDB();
+
+        const ebooks = await db
+            .collection("ebooks")
+            .find({})
+            .sort({ createdAt: -1 })
+            .toArray();
+
+        res.json(ebooks);
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Failed to load ebooks.",
+        });
+    }
+});
+
+
+
 
 router.get("/:id", async (req, res) => {
     try {
@@ -111,8 +133,7 @@ router.post("/", async (req, res) => {
             language,
             pages: Number(pages),
 
-            status: "Available",
-
+            status: "Unpublished",
             writer: {
                 id: writer.id,
                 name: writer.name,
@@ -299,6 +320,7 @@ router.patch("/:id", async (req, res) => {
         });
     }
 });
+
 
 
 
