@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 import ebookRoutes from "./routes/ebooks.js";
 import bookmarkRoutes from "./routes/bookmarks.js";
 import purchaseRoutes from "./routes/purchases.js";
-
+import userRoutes from "./routes/users.js";
 
 const app = express();
 
@@ -24,6 +24,7 @@ await connectDB();
 app.use("/ebooks", ebookRoutes);
 app.use("/bookmarks", bookmarkRoutes);
 app.use("/purchases", purchaseRoutes);
+app.use("/users", userRoutes);
 
 app.get("/writers", async (req, res) => {
     try {
