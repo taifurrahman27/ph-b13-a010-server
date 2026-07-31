@@ -165,6 +165,7 @@ router.get("/writer/:writerId", async (req, res) => {
             .sort((a, b) => (b.totalSales || 0) - (a.totalSales || 0))
             .slice(0, 5)
             .map((ebook) => ({
+                _id: ebook._id.toString(),
                 title: ebook.title,
                 sales: ebook.totalSales || 0,
                 revenue: ebook.totalRevenue || 0,

@@ -9,14 +9,36 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const db = await connectDB();
+        const { search } = req.query;
+        let query = {};
+
+        if (search) {
+            query = {
+                $or: [
+                    {
+                        title: {
+                            $regex: search,
+                            $options: "i",
+                        },
+                    },
+                    {
+                        "writer.name": {
+                            $regex: search,
+                            $options: "i",
+                        },
+                    },
+                ],
+            };
+        }
 
         const ebooks = await db
             .collection("ebooks")
-            .find({})
+            .find(query)
             .sort({ createdAt: -1 })
             .toArray();
 
         res.json(ebooks);
+
     } catch (error) {
         console.error(error);
 
