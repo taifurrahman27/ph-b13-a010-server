@@ -203,6 +203,68 @@ router.get("/writer/:writerId", async (req, res) => {
 });
 
 
+router.get("/reader/:userId", async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const db = await connectDB();
+
+        const purchases = await db
+            .collection("purchases")
+            .find({
+                userId,
+                paymentStatus: "Paid",
+                type: "purchase",
+            })
+            .sort({
+                createdAt: -1,
+            })
+            .toArray();
+
+        const totalPurchased = purchases.length;
+
+        const totalSpent = purchases.reduce(
+            (sum, purchase) =>
+                sum + Number(purchase.amount || 0),
+            0
+        );
+
+        const recentPurchases = purchases
+            .slice(0, 5)
+            .map((purchase) => ({
+                _id: purchase._id,
+                ebookId: purchase.ebookId,
+                ebookTitle: purchase.ebookTitle,
+                amount: purchase.amount,
+                createdAt: purchase.createdAt,
+            }));
+
+        const ebookIds = purchases.map(
+            (purchase) => purchase.ebookId
+        );
+
+        const uniqueBooks = [...new Set(ebookIds)];
+
+        res.json({
+            stats: {
+                purchasedBooks: uniqueBooks.length,
+                purchases: totalPurchased,
+                totalSpent,
+            },
+            recentPurchases,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to load reader analytics.",
+        });
+    }
+});
+
+
 
 
 
