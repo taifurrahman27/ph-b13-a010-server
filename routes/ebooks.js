@@ -9,26 +9,47 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const db = await connectDB();
-        const { search } = req.query;
+
+        const {
+            search,
+            genre,
+            minPrice,
+            maxPrice,
+        } = req.query;
+
         let query = {};
 
         if (search) {
-            query = {
-                $or: [
-                    {
-                        title: {
-                            $regex: search,
-                            $options: "i",
-                        },
+            query.$or = [
+                {
+                    title: {
+                        $regex: search,
+                        $options: "i",
                     },
-                    {
-                        "writer.name": {
-                            $regex: search,
-                            $options: "i",
-                        },
+                },
+                {
+                    "writer.name": {
+                        $regex: search,
+                        $options: "i",
                     },
-                ],
-            };
+                },
+            ];
+        }
+
+        if (genre && genre !== "All") {
+            query.genre = genre;
+        }
+
+        if (minPrice || maxPrice) {
+            query.price = {};
+
+            if (minPrice) {
+                query.price.$gte = Number(minPrice);
+            }
+
+            if (maxPrice) {
+                query.price.$lte = Number(maxPrice);
+            }
         }
 
         const ebooks = await db
@@ -48,6 +69,7 @@ router.get("/", async (req, res) => {
         });
     }
 });
+
 
 
 router.get("/admin", async (req, res) => {
