@@ -7,6 +7,10 @@ import ebookRoutes from "./routes/ebooks.js";
 import bookmarkRoutes from "./routes/bookmarks.js";
 import purchaseRoutes from "./routes/purchases.js";
 import userRoutes from "./routes/users.js";
+import transactionsRouter from "./routes/transactions.js"
+
+import analyticsRoutes from "./routes/analytics.js";
+
 
 const app = express();
 
@@ -25,6 +29,9 @@ app.use("/ebooks", ebookRoutes);
 app.use("/bookmarks", bookmarkRoutes);
 app.use("/purchases", purchaseRoutes);
 app.use("/users", userRoutes);
+app.use("/transactions", transactionsRouter);
+app.use("/analytics", analyticsRoutes);
+
 
 app.get("/writers", async (req, res) => {
     try {
