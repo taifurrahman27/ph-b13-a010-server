@@ -144,6 +144,7 @@ router.post("/", async (req, res) => {
             fileUrl,
 
             totalSales: 0,
+            totalRevenue: 0,
             rating: 0,
             reviews: 0,
             featured: false,
@@ -320,8 +321,6 @@ router.patch("/:id", async (req, res) => {
         });
     }
 });
-
-
 
 
 

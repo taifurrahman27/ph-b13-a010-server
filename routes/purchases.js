@@ -5,6 +5,7 @@ import { connectDB } from "../lib/db.js";
 const router = express.Router();
 
 router.get("/:userId", async (req, res) => {
+
     try {
         const { userId } = req.params;
 
@@ -14,11 +15,13 @@ router.get("/:userId", async (req, res) => {
             .collection("purchases")
             .find({
                 userId,
-                paymentStatus: "complete",
+                paymentStatus: "Paid",
             })
+
             .sort({
-                purchasedAt: -1,
+                createdAt: -1,
             })
+
             .toArray();
 
         if (purchases.length === 0) {
@@ -47,7 +50,7 @@ router.get("/:userId", async (req, res) => {
 
             return {
                 ...ebook,
-                purchaseDate: purchase.purchasedAt,
+                purchaseDate: purchase.createdAt,
             };
         });
 

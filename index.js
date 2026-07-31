@@ -10,6 +10,7 @@ import userRoutes from "./routes/users.js";
 import transactionsRouter from "./routes/transactions.js"
 
 import analyticsRoutes from "./routes/analytics.js";
+import salesRoutes from "./routes/sales.js";
 
 
 const app = express();
@@ -31,6 +32,8 @@ app.use("/purchases", purchaseRoutes);
 app.use("/users", userRoutes);
 app.use("/transactions", transactionsRouter);
 app.use("/analytics", analyticsRoutes);
+
+app.use("/sales", salesRoutes);
 
 
 app.get("/writers", async (req, res) => {
