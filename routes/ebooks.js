@@ -89,6 +89,46 @@ router.get("/", async (req, res) => {
 
 
 
+router.get("/featured", async (req, res) => {
+    try {
+        const db = await connectDB();
+        const collection = db.collection("ebooks");
+
+        const featured = await collection
+            .find({ featured: true })
+            .sort({ createdAt: -1 })
+            .limit(6)
+            .toArray();
+
+        if (featured.length === 6) {
+            return res.json(featured);
+        }
+
+        const featuredIds = featured.map((ebook) => ebook._id);
+
+        const latest = await collection
+            .find({
+                _id: { $nin: featuredIds },
+            })
+            .sort({ createdAt: -1 })
+            .limit(6 - featured.length)
+            .toArray();
+
+        res.json([...featured, ...latest]);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to load featured ebooks.",
+        });
+    }
+});
+
+
+
+
 router.get("/admin", async (req, res) => {
     try {
         const db = await connectDB();
