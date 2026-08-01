@@ -150,6 +150,52 @@ router.get("/admin", async (req, res) => {
 });
 
 
+router.get("/top-writers", async (req, res) => {
+    try {
+        const db = await connectDB();
+
+        const ebooks = await db
+            .collection("ebooks")
+            .find({})
+            .toArray();
+
+        const writersMap = {};
+
+        ebooks.forEach((ebook) => {
+            if (!ebook.writer) return;
+
+            const writer = ebook.writer;
+
+            if (!writersMap[writer.id]) {
+                writersMap[writer.id] = {
+                    id: writer.id,
+                    name: writer.name,
+                    photo: writer.photo,
+                    totalBooks: 0,
+                    totalSales: 0,
+                };
+            }
+
+            writersMap[writer.id].totalBooks += 1;
+            writersMap[writer.id].totalSales += ebook.totalSales || 0;
+        });
+
+        const topWriters = Object.values(writersMap)
+            .sort((a, b) => b.totalSales - a.totalSales)
+            .slice(0, 3);
+
+        res.json(topWriters);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to load top writers.",
+        });
+    }
+});
+
 
 
 router.get("/:id", async (req, res) => {
