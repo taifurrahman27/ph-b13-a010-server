@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
             genre,
             minPrice,
             maxPrice,
+            page = 1,
         } = req.query;
 
         let query = {};
@@ -52,13 +53,29 @@ router.get("/", async (req, res) => {
             }
         }
 
+        const limit = 6;
+        const currentPage = Number(page);
+        const skip = (currentPage - 1) * limit;
+
+
+        const total = await db
+            .collection("ebooks")
+            .countDocuments(query);
+
         const ebooks = await db
             .collection("ebooks")
             .find(query)
             .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .toArray();
 
-        res.json(ebooks);
+        res.json({
+            ebooks,
+            total,
+            currentPage,
+            totalPages: Math.ceil(total / limit),
+        });
 
     } catch (error) {
         console.error(error);
