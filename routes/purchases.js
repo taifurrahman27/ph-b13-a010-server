@@ -1,10 +1,11 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { connectDB } from "../lib/db.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", verifyToken, async (req, res) => {
 
     try {
         const { userId } = req.params;

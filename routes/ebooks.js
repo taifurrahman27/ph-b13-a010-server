@@ -1,6 +1,8 @@
 import express from "express";
 import { connectDB } from "../lib/db.js";
 import { ObjectId } from "mongodb";
+import verifyToken from "../middleware/verifyToken.js";
+import { checkRole } from "../middleware/checkRole.js";
 
 const router = express.Router();
 
@@ -235,7 +237,7 @@ router.get("/:id", async (req, res) => {
 
 
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, checkRole("writer"), async (req, res) => {
     try {
         const db = await connectDB();
 
@@ -318,7 +320,7 @@ router.post("/", async (req, res) => {
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -417,7 +419,7 @@ router.patch("/:id/status", async (req, res) => {
 });
 
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", checkRole("writer"), verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
 

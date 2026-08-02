@@ -1,11 +1,12 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { connectDB } from "../lib/db.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
     try {
         const db = await connectDB();
 
@@ -18,7 +19,6 @@ router.post("/", async (req, res) => {
             });
         }
 
-        // Prevent duplicate bookmarks
         const exists = await db.collection("bookmarks").findOne({
             userId,
             ebookId,
@@ -90,7 +90,7 @@ router.get("/user/:userId", async (req, res) => {
 });
 
 
-router.delete("/", async (req, res) => {
+router.delete("/", verifyToken, async (req, res) => {
 
     try {
 
