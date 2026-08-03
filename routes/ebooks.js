@@ -419,7 +419,7 @@ router.patch("/:id/status", async (req, res) => {
 });
 
 
-router.patch("/:id", checkRole("writer"), verifyToken, async (req, res) => {
+router.patch("/:id", verifyToken, checkRole("writer"), async (req, res) => {
     try {
         const { id } = req.params;
 
