@@ -16,7 +16,7 @@ import salesRoutes from "./routes/sales.js";
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.BETTER_AUTH_CLIENT_URL || "http://localhost:3000",
     credentials: true,
 }));
 
